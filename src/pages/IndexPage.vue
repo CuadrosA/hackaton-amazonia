@@ -212,6 +212,59 @@
           </q-card-actions>
         </q-card>
       </div>
+      <div class="layout-project-cards">
+        <div flat class="projects-title">
+          <p>Current projects</p>
+          <q-separator
+            inset
+            style="width: 30%; height: 5px; background-color: #74ae2d"
+          />
+          <p>
+            Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse
+            molestie consequat, vel illum dolore eu feugiat nulla facilisis at
+            vero
+          </p>
+        </div>
+
+        <div class="projects-items">
+          <q-img
+            src="images/index_banner.png"
+            class="full-width"
+            style="height: 400px"
+          >
+            <div class="absolute-center text-center text-white">
+              <p>Eco-Landscaping</p>
+            </div>
+          </q-img>
+          <q-img
+            src="images/index_banner.png"
+            class="full-width"
+            style="height: 400px"
+          >
+            <div class="absolute-center text-center text-white">
+              <p>Eco-Landscaping</p>
+            </div>
+          </q-img>
+          <q-img
+            src="images/index_banner.png"
+            class="full-width"
+            style="height: 400px"
+          >
+            <div class="absolute-center text-center text-white">
+              <p>Eco-Landscaping</p>
+            </div>
+          </q-img>
+          <q-img
+            src="images/index_banner.png"
+            class="full-width"
+            style="height: 400px"
+          >
+            <div class="absolute-center text-center text-white">
+              <p>Eco-Landscaping</p>
+            </div>
+          </q-img>
+        </div>
+      </div>
     </q-section>
   </q-page>
 </template>
@@ -439,6 +492,66 @@ export default defineComponent({
     .card-btn-more {
       font-size: 20px;
       font-weight: bold;
+    }
+  }
+}
+
+.layout-project-cards {
+  margin: 100px 60px;
+  align-items: center;
+
+  .projects-title {
+    width: 50%;
+    justify-self: center;
+    align-items: center;
+    justify-items: center;
+    // border: 1px solid red;
+
+    .q-separator {
+      margin: 20px 0px;
+      color: #346473;
+    }
+
+    p {
+      text-align: center;
+      &:nth-child(1) {
+        font-size: 40px;
+      }
+
+      &:nth-child(2) {
+        font-size: 30px;
+      }
+    }
+  }
+
+  .projects-items {
+    // border: 1px solid red;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+
+    .q-img {
+      width: 100%;
+      grid-area: 1fr;
+
+      div {
+        justify-items: center;
+        align-items: center;
+        background-color: rgb(255, 255, 255);
+        width: 90%;
+
+        p {
+          width: fit-content;
+          margin: 0;
+          padding: 3px 10px;
+          align-self: center;
+          justify-self: center;
+          color: black;
+          font-size: 17.5px;
+          text-transform: uppercase;
+          letter-spacing: 2px;
+        }
+      }
     }
   }
 }

@@ -2,25 +2,57 @@
   <q-layout view="lHh Lpr lFf">
     <q-header elevated>
       <q-toolbar>
-        <q-avatar>
+        <q-avatar class="name-page-back" @click="this.go_home()">
           <img src="icons\image.png" />
         </q-avatar>
-        <q-toolbar-title>Raíces Tecnológicas</q-toolbar-title>
+        <q-toolbar-title class="name-page-back" @click="this.go_home()">
+          Raíces Tecnológicas
+        </q-toolbar-title>
 
-        <q-btn-toggle
+        <!-- <q-btn-toggle
           v-model="model"
           flat
           stretch
           toggle-color="yellow"
           :options="nav_options"
           @update:model-value="nav_seleccionado"
-        />
+        /> -->
 
-        <q-separator dark vertical />
         <q-btn
           stretch
           flat
-          label="Login"
+          label="Lugares"
+          @click="this.go_lugares()"
+          style=".active"
+        />
+        <q-btn stretch flat label="Productos" @click="this.go_productos()" />
+        <q-btn-dropdown
+          stretch
+          color="none"
+          label="Servicios"
+          dropdown-icon="none"
+        >
+          <q-list>
+            <q-item clickable v-close-popup @click="onItemClick">
+              <q-item-section>
+                <q-item-label>Calculadora Contable</q-item-label>
+              </q-item-section>
+            </q-item>
+
+            <q-item clickable v-close-popup @click="onItemClick">
+              <q-item-section>
+                <q-item-label>Simulador de precios</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-btn-dropdown>
+
+        <q-separator dark vertical />
+
+        <q-btn
+          stretch
+          flat
+          label="Ingresar"
           icon="login"
           @click="login_dialog = true"
         />
@@ -124,6 +156,15 @@ export default defineComponent({
     };
   },
   methods: {
+    go_home() {
+      this.$router.push("/");
+    },
+    go_productos() {
+      this.$router.push("/productos");
+    },
+    go_lugares() {
+      this.$router.push("/");
+    },
     async login() {
       try {
         const userCredential = await signInWithEmailAndPassword(
@@ -193,6 +234,9 @@ export default defineComponent({
   // background-image: linear-gradient(120deg, #d4fc79 0%, #96e6a1 100%);
   //background-color: #85ffbd;
   //background-image: linear-gradient(45deg, #85ffbd 0%, #fffb7d 100%);
+  .name-page-back {
+    cursor: pointer;
+  }
 
   .btn-grad {
     background-image: linear-gradient(
