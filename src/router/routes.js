@@ -8,6 +8,23 @@ const routes = [
         path: "productos",
         component: () => import("pages/ProductosGeneral.vue"),
       },
+      {
+        path: "lugares",
+        component: () => import("pages/LugaresView.vue"),
+      },
+      {
+        path: "calculadora-contable",
+        component: () =>
+          import("pages/aplicaciones_libre/CalculadoraContable.vue"),
+      },
+      {
+        path: "simulador-precio",
+        component: () => import("pages/aplicaciones_libre/SimuladorPrecio.vue"),
+      },
+      {
+        path: "control-inventario",
+        component: () => import("pages/ControlInventario.vue"),
+      },
     ],
   },
 

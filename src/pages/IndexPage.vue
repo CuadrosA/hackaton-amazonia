@@ -42,7 +42,7 @@
         <q-card class="card-2">
           <q-card-section>
             <q-img
-              src="public\icons\signo-de-cotizacion-derecho.png"
+              src="\icons\signo-de-cotizacion-derecho.png"
               id="icon_c2-bottom"
             />
 

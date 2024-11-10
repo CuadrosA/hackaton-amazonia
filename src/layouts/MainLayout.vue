@@ -9,15 +9,6 @@
           Raíces Tecnológicas
         </q-toolbar-title>
 
-        <!-- <q-btn-toggle
-          v-model="model"
-          flat
-          stretch
-          toggle-color="yellow"
-          :options="nav_options"
-          @update:model-value="nav_seleccionado"
-        /> -->
-
         <q-btn
           stretch
           flat
@@ -26,20 +17,21 @@
           style=".active"
         />
         <q-btn stretch flat label="Productos" @click="this.go_productos()" />
+
         <q-btn-dropdown
           stretch
           color="none"
           label="Servicios"
-          dropdown-icon="none"
+          dropdown-icon="calculate"
         >
           <q-list>
-            <q-item clickable v-close-popup @click="onItemClick">
+            <q-item clickable v-close-popup @click="this.go_calculadora()">
               <q-item-section>
                 <q-item-label>Calculadora Contable</q-item-label>
               </q-item-section>
             </q-item>
 
-            <q-item clickable v-close-popup @click="onItemClick">
+            <q-item clickable v-close-popup @click="this.go_simulador_precio()">
               <q-item-section>
                 <q-item-label>Simulador de precios</q-item-label>
               </q-item-section>
@@ -48,15 +40,58 @@
         </q-btn-dropdown>
 
         <q-separator dark vertical />
+        <q-btn
+          stretch
+          flat
+          label="Inventario"
+          icon="inventory"
+          @click="go_control_inventario()"
+          v-if="(loged == true) & (user.tipoUsuario == 'Vendedor')"
+        />
 
+        <q-btn-dropdown
+          stretch
+          v-if="loged == true"
+          color="none"
+          :label="user.name"
+          dropdown-icon="account_circle"
+        >
+          <q-list>
+            <q-item clickable v-close-popup @click="this.logout()">
+              <q-item-section>
+                <q-item-label>
+                  <q-icon
+                    name="logout"
+                    color="black"
+                    style="align-self: center; margin-right: 5px"
+                    size="30px"
+                  />
+                  Desconectar
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-btn-dropdown>
+
+        <q-btn
+          stretch
+          flat
+          label="Registrarse"
+          icon="how_to_reg"
+          @click="register_dialog = true"
+          v-if="loged == false"
+        />
         <q-btn
           stretch
           flat
           label="Ingresar"
           icon="login"
           @click="login_dialog = true"
+          v-if="loged == false"
         />
       </q-toolbar>
+
+      <!-- Dialogo de ingreso/login -->
       <q-dialog v-model="login_dialog">
         <q-card class="q-pa-md" style="width: 400px">
           <q-card-section>
@@ -73,7 +108,19 @@
 
           <q-card-section>
             <div class="text-h6">Ingresa tu constraseña</div>
-            <q-input filled v-model="user.password" label="contraseña" />
+            <q-input
+              v-model="user.password"
+              filled
+              :type="isPwd ? 'password' : 'text'"
+            >
+              <template v-slot:append>
+                <q-icon
+                  :name="isPwd ? 'visibility_off' : 'visibility'"
+                  class="cursor-pointer"
+                  @click="isPwd = !isPwd"
+                />
+              </template>
+            </q-input>
           </q-card-section>
 
           <q-card-actions>
@@ -83,10 +130,87 @@
               color="secondary"
               v-close-popup
               type="submit"
-              @click="
-                this.login();
-                this.fetchUserData();
-              "
+              @click="this.login()"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+
+      <!-- Dialogo de registro -->
+      <q-dialog v-model="register_dialog">
+        <q-card class="q-pa-md" style="width: 400px">
+          <q-card-section>
+            <div class="text-h6" style="justify-self: center">
+              <q-icon name="logout" />
+              Registrarse
+            </div>
+          </q-card-section>
+
+          <q-card-section>
+            <div class="text-h6">Ingresa tu Nombre</div>
+            <q-input filled v-model="user.name" label="ejemplo: marco" />
+            <div class="text-h6">Ingresa tu Apellido</div>
+            <q-input filled v-model="user.lastname" label="ejemplo: López" />
+          </q-card-section>
+
+          <q-card-section>
+            <div class="text-h6">Ingresa tu correo</div>
+            <q-input filled v-model="user.email" label="ejemplo@gmail.com" />
+          </q-card-section>
+
+          <q-card-section>
+            <div class="text-h6">Ingresa tu constraseña</div>
+            <q-input
+              v-model="user.password"
+              filled
+              :type="isPwd ? 'password' : 'text'"
+            >
+              <template v-slot:append>
+                <q-icon
+                  :name="isPwd ? 'visibility_off' : 'visibility'"
+                  class="cursor-pointer"
+                  @click="isPwd = !isPwd"
+                />
+              </template>
+            </q-input>
+          </q-card-section>
+
+          <q-card-section>
+            <div class="text-h6">Tipo Usuario:</div>
+            <q-btn-dropdown
+              stretch
+              color="primary"
+              :label="user.type"
+              style="width: 100%"
+              align="between"
+            >
+              <q-list>
+                <q-item clickable v-close-popup @click="user.type = 'Vendedor'">
+                  <q-item-section>
+                    <q-item-label> Vendedor </q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item
+                  clickable
+                  v-close-popup
+                  @click="user.type = 'Comprador'"
+                >
+                  <q-item-section>
+                    <q-item-label> Comprador </q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-btn-dropdown>
+          </q-card-section>
+
+          <q-card-actions>
+            <q-btn
+              style="width: 100%"
+              label="Registrarse"
+              color="secondary"
+              v-close-popup
+              type="submit"
+              @click="this.registerUserWithProfile()"
             />
           </q-card-actions>
         </q-card>
@@ -101,58 +225,49 @@
 
 <script>
 import { defineComponent, ref } from "vue";
-import { auth, signInWithEmailAndPassword } from "src/firebase";
-import { db, doc, getDoc, collection, getDocs } from "src/firebase";
+
+import {
+  auth,
+  signInWithEmailAndPassword,
+  getAuth,
+  createUserWithEmailAndPassword,
+  getFirestore,
+  signOut,
+  db,
+  setDoc,
+  getDoc,
+  doc,
+  collection,
+  getDocs,
+} from "src/firebase";
 import { useRouter } from "vue-router";
+import { Notify } from "quasar";
 
 export default defineComponent({
   name: "MainLayout",
 
   components: {},
 
-  setup() {
-    const model = ref("one");
-    const router = useRouter();
+  setup() {},
 
-    const nav_options = [
-      { label: "Lugares", value: "lugar" },
-      { label: "Productos", value: "producto" },
-    ];
-
-    const nav_seleccionado = (value) => {
-      console.log(`Opción seleccionada: ${value}`);
-      switch (value) {
-        case "lugar":
-          console.log("Se seleccionó la función lugar");
-          break;
-        case "producto":
-          router.push("/productos");
-          console.log("Se seleccionó la función producto");
-          break;
-        case "three":
-          console.log("Función para la opción Three");
-          break;
-      }
-    };
-
-    return {
-      model,
-      nav_options,
-      nav_seleccionado,
-      router,
-    };
-  },
+  computed() {},
 
   data() {
     return {
       login_dialog: ref(false),
+      register_dialog: ref(false),
+      isPwd: ref(true),
       user: {
+        name: ref(""),
         email: ref("test@gmail.com"),
         password: ref("testing"),
+        type: ref("Comprador"),
+        lastname: ref(""),
         data: {},
       },
       userData: {},
       productos: {},
+      loged: ref(false),
     };
   },
   methods: {
@@ -163,8 +278,18 @@ export default defineComponent({
       this.$router.push("/productos");
     },
     go_lugares() {
-      this.$router.push("/");
+      this.$router.push("/lugares");
     },
+    go_calculadora() {
+      this.$router.push("/calculadora-contable");
+    },
+    go_simulador_precio() {
+      this.$router.push("/simulador-precio");
+    },
+    go_control_inventario() {
+      this.$router.push("/control-inventario");
+    },
+
     async login() {
       try {
         const userCredential = await signInWithEmailAndPassword(
@@ -172,22 +297,86 @@ export default defineComponent({
           this.user.email,
           this.user.password
         );
-        console.log("Usuario logueado", userCredential.user);
-        //router.push("/dashboard"); // Redirige al dashboard o página principal
+
+        //Almacenamiento del uid y el tiempo de login
+        localStorage.setItem("user_uid", userCredential.user.uid);
+        localStorage.setItem("login", Date.now());
+        this.fetchUserInfo();
+
+        this.loged = true;
+
+        // console.log("Usuario logueado", userCredential.user);
       } catch (error) {
         console.error("Error al iniciar sesión:", error.message);
-        // Aquí puedes mostrar un mensaje de error en la UI si lo deseas
       }
     },
 
+    // Método de logout modificado
     async logout() {
-      const router = useRouter();
       try {
         await signOut(auth);
-        console.log("Sesión cerrada");
-        router.push("/login"); // Redirige a la página de login
+
+        // Eliminar datos del localStorage
+        localStorage.removeItem("user_uid");
+        localStorage.removeItem("login");
+        localStorage.removeItem("user_data");
+        this.loged = false;
+
+        // console.log("Sesión cerrada");
       } catch (error) {
         console.error("Error al cerrar sesión:", error.message);
+      }
+    },
+
+    // Método para verificar la validez de la sesión
+    checkSessionValidity() {
+      const userUID = localStorage.getItem("user_uid");
+      const loginTimestamp = localStorage.getItem("login");
+
+      if (userUID && loginTimestamp) {
+        const currentTime = Date.now();
+        const sessionDuration = currentTime - parseInt(loginTimestamp);
+        const oneHour = 60 * 60 * 1000; // 1 hora en milisegundos
+
+        if (sessionDuration > oneHour) {
+          // La sesión ha expirado, eliminar datos del localStorage
+          this.logout();
+          return false;
+        }
+        return true;
+      }
+      return false;
+    },
+
+    async registerUserWithProfile() {
+      const auth = getAuth();
+      const db = getFirestore();
+
+      try {
+        // Crear usuario en Authentication
+        const userCredential = await createUserWithEmailAndPassword(
+          auth,
+          this.user.email,
+          this.user.password
+        );
+
+        const user = userCredential.user;
+
+        // Crear documento en Firestore
+        const userDocRef = doc(db, "users", user.uid);
+        await setDoc(userDocRef, {
+          uid: user.uid,
+          email: this.user.email,
+          nombre: this.user.name,
+          apellido: this.user.lastname,
+          tipoUsuario: this.user.type,
+          fechaRegistro: new Date(),
+        });
+
+        this.login();
+      } catch (error) {
+        console.error("Error de registro:", error);
+        throw error;
       }
     },
 
@@ -225,6 +414,37 @@ export default defineComponent({
         console.log("No hay usuario autenticado");
       }
     },
+    async fetchUserInfo() {
+      const user = auth.currentUser;
+      if (user) {
+        try {
+          const userDocRef = doc(db, "users", user.uid);
+          const userDoc = await getDoc(userDocRef);
+
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            this.user.tipoUsuario = userData.tipoUsuario;
+            this.user.name = userData.nombre;
+
+            localStorage.setItem("user_data", JSON.stringify(userData));
+          } else {
+            console.log("No se encontró el documento del usuario");
+            return null;
+          }
+        } catch (error) {
+          console.error("Error al obtener el usuario:", error);
+          return null;
+        }
+      }
+    },
+  },
+
+  mounted() {
+    this.checkSessionValidity();
+    if (localStorage.getItem("user_uid")) {
+      this.loged = true;
+      this.fetchUserInfo();
+    }
   },
 });
 </script>
