@@ -60,11 +60,7 @@
 
         <q-card-section>
           <div class="text-h6">Nombre Producto:</div>
-          <q-input
-            filled
-            v-model="n_product.nommbre"
-            label="ejemplo: castaña"
-          />
+          <q-input filled v-model="n_product.nombre" label="ejemplo: castaña" />
           <div class="text-h6">Cantidad:</div>
           <q-input
             v-model.number="n_product.cantidad"
@@ -219,6 +215,7 @@ export default defineComponent({
           user: "",
           description: "",
         };
+        this.getProducts();
 
         return newProductRef.id;
       } catch (error) {
